@@ -1,0 +1,28 @@
+<mxfile host="65bd71144e">
+    <diagram id="lU3ok__JMn3nEPcHjW7E" name="Page-1">
+        <mxGraphModel dx="934" dy="843" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="6" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="2" target="3">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="User" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://az-icons.com/export/icons/06c2a09f4135f9abddcf315efd9b90ef.svg;" vertex="1" parent="1">
+                    <mxGeometry x="210" y="250" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="3" target="4">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="App Service" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://az-icons.com/export/icons/ce8c231e0aac956666abed4c3e6963a2.svg;" vertex="1" parent="1">
+                    <mxGeometry x="330" y="245" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Cosmos DB" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://az-icons.com/export/icons/395e1f421234e56a7c504141379cf846.svg;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="240" width="70" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Azure DevOps" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://az-icons.com/export/icons/d4346f5a054abfb8cb3256599aebf469.svg;" vertex="1" parent="1">
+                    <mxGeometry x="300" y="60" width="100" height="100" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

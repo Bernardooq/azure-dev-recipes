@@ -23,7 +23,7 @@ categorySchema.statics.findCategories= async (filter)=>{
     let proj = {};
     // let docs = await User.find(filter, proj).skip(3).limit(2); filtrar por página,
     let docs = Category.find(filter, proj).sort({name: 1});
-    let count = Category.find(filter).count();
+    let count = await Category.countDocuments(filter);
 
     let resp = await Promise.all([docs, count]);
 

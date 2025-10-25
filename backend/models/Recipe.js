@@ -109,7 +109,7 @@ recipeSchema.statics.findRecipes = async (filter, pageSize = 10, pageNumber = 1,
     console.log(regexFilter)
 
     let docs = Recipe.find(regexFilter, proj).skip(skip).limit(limit).sort({ creation_date: 1 }).populate('author', 'username userPhoto').populate('categories', 'name').populate('chat', 'user content');
-    let count = Recipe.find(regexFilter).count();
+    let count = await Recipe.countDocuments(regexFilter);
 
     let resp = await Promise.all([docs, count]);
 
