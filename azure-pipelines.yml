@@ -3,7 +3,10 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- main   # Se ejecuta solo cuando hay cambios en main
+  branches:
+    include:
+      - main
+  batch: false
 
 pr:
   branches:
@@ -47,37 +50,24 @@ stages:
 # Stage 2: Build & Push solo tras merge
 - stage: BuildAndPush
   displayName: 'Build & Push Docker Image'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: or(
+    and(succeeded(), eq(variables['Build.Reason'], 'IndividualCI')),
+    and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main')))
   jobs:
-  - job: BuildTestPush
-    displayName: 'Build, Test y Push'
+  - job: Build
     pool:
       vmImage: ubuntu-latest
     steps:
     - checkout: self
-
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '20.x'
-      displayName: 'Usar Node.js 20'
-
-    - script: |
-        echo "Instalando dependencias..."
-        npm install
+    - script: npm install
       displayName: 'Instalar dependencias'
-
-    - script: |
-        echo "Corriendo pruebas..."
-#        npm test || exit 1
-      displayName: 'Ejecutar pruebas unitarias'
-
     - task: Docker@2
-      displayName: 'Build & Push Docker Image'
+      displayName: 'Build and Push Docker image'
       inputs:
         command: buildAndPush
         containerRegistry: '$(dockerConnection)'
         repository: '$(imageName)'
-        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+        Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
         tags: |
           $(tag)
           latest
