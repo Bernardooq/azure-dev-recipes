@@ -80,7 +80,7 @@ userSchema.statics.findUsers= async (filter, isAdmin = false, pageSize=4, pageNu
             select: 'username' // Selecciona solo el nombre de usuario del autor de cada favorito
         }
     })
-    let count = await User.countDocuments(filter);
+    let count = User.find(filter).count();
 
     let resp = await Promise.all([docs, count]);
 

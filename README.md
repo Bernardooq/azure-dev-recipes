@@ -1,1 +1,4 @@
-# azure-dev-recipes
+- For executing the proyect please execute the following commands
+- npm init
+- npm i (every package)
+- nodemon, nanoid, express, mongoose, dotenv

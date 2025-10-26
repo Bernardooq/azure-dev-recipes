@@ -1,6 +1,6 @@
-const {mongoose} = require("../DB/connectDB.js")
-const {Recipe} = require("./Recipe.js")
-const { User } = require("./User.js");
+const {mongoose} = require("../DB/connectDB")
+const {Recipe} = require("../models/Recipe.js")
+const { User } = require("../models/User.js");
 
 let reviewSchema = mongoose.Schema({
     comment: {
@@ -36,7 +36,7 @@ reviewSchema.statics.saveReview = async (_id,reviewData, recipeId)=>{
     let newReview = Review(reviewData);
     let doc = await newReview.save();
 
-    const {User} = require('./User.js');
+    const {User} = require('../models/User.js');
 
     await User.addMyReviews(_id, doc._id);
     await Recipe.addReviews(recipeId, doc._id);

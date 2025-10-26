@@ -1,7 +1,7 @@
 {
   "name": "myfirstapp",
   "version": "1.0.0",
-  "description": "- For executing the proyect please execute the following commands\r - npm init\r - npm i (every package)\r - nodemon, nanoid, express, mongoose, dotenv",
+  "description": "",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -24,13 +24,5 @@
   },
   "engines": {
     "node": "20.x"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/IMTHEBIGGESTLOL/WEBproyect.git"
-  },
-  "bugs": {
-    "url": "https://github.com/IMTHEBIGGESTLOL/WEBproyect/issues"
-  },
-  "homepage": "https://github.com/IMTHEBIGGESTLOL/WEBproyect#readme"
+  }
 }
