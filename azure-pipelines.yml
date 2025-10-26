@@ -1,66 +1,58 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
   branches:
     include:
-      - main
-  batch: false
+      - main  # Se ejecuta en cada commit o merge a main
 
 pr:
   branches:
     include:
-    - main   # Se ejecuta al validar PR hacia main
+      - dev   # Valida PRs desde dev
 
 variables:
   tag: '$(Build.BuildId)'
-  dockerConnection: 'docker'               # service connection
-  imageName: 'bernardo2004/recipes-app'    # imagen Docker Hub
+  imageName: 'bernardo2004/recipes-proy'
+  dockerConnection: 'docker'
 
 stages:
-# Stage 1: Validar Pull Request
+# Validar PR (solo al crear PR, sin push)
 - stage: Validate
   displayName: 'Validar Pull Request (sin push)'
   condition: eq(variables['Build.Reason'], 'PullRequest')
   jobs:
-  - job: ValidatePR
-    displayName: 'Instalar dependencias y validar build'
+  - job: Validate
     pool:
       vmImage: ubuntu-latest
     steps:
     - checkout: self
-
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '20.x' 
-      displayName: 'Usar Node.js 20'
-
     - script: |
-        echo "Instalando dependencias..."
         npm install
-        echo "Dependencias instaladas correctamente"
-      displayName: 'Instalar dependencias Node.js'
+        echo "Aún no hay pruebas unitarias configuradas"
+      displayName: 'Instalar dependencias y correr pruebas'
 
-    - script: |
-        echo "Ejecutando pruebas..."
-#        npm test || exit 1
-      displayName: 'Correr pruebas automáticas'
-
-# Stage 2: Build & Push solo tras merge
+# Build & Push (solo cuando llega a main)
 - stage: BuildAndPush
   displayName: 'Build & Push Docker Image'
-  condition: or(
-    and(succeeded(), eq(variables['Build.Reason'], 'IndividualCI')),
-    and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main')))
+  # Se ejecuta si viene de main y no es PR
+  condition: |
+    and(
+      succeeded(),
+      or(
+        eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+        eq(variables['Build.SourceBranchName'], 'main')
+      ),
+      ne(variables['Build.Reason'], 'PullRequest')
+    )
   jobs:
   - job: Build
     pool:
       vmImage: ubuntu-latest
     steps:
     - checkout: self
-    - script: npm install
+
+    - script: |
+        npm ci
       displayName: 'Instalar dependencias'
+
     - task: Docker@2
       displayName: 'Build and Push Docker image'
       inputs:
