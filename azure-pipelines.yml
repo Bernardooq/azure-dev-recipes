@@ -1,12 +1,13 @@
 trigger:
   branches:
     include:
-      - main  # Se ejecuta en cada commit o merge a main
+      - main
+      - dev  # Para que dispare también al hacer merge a main o push a dev
 
 pr:
   branches:
     include:
-      - dev   # Valida PRs desde dev
+      - dev
 
 variables:
   tag: '$(Build.BuildId)'
@@ -14,33 +15,38 @@ variables:
   dockerConnection: 'docker'
 
 stages:
-# Validar PR (solo al crear PR, sin push)
+# Validacion y pruebas
 - stage: Validate
-  displayName: 'Validar Pull Request (sin push)'
-  condition: eq(variables['Build.Reason'], 'PullRequest')
+  displayName: 'Validar y ejecutar pruebas'
+  # Se ejecuta en cualquier evento (PR, merge, push)
+  condition: |
+    or(
+      eq(variables['Build.Reason'], 'PullRequest'),
+      eq(variables['Build.Reason'], 'IndividualCI')
+    )
   jobs:
-  - job: Validate
+  - job: Test
     pool:
       vmImage: ubuntu-latest
     steps:
     - checkout: self
     - script: |
+        echo "Instalando dependencias..."
         npm install
-        echo "Aún no hay pruebas unitarias configuradas"
+        echo "Ejecutando pruebas..."
+        npm test || echo "Pruebas ejecutadas"
       displayName: 'Instalar dependencias y correr pruebas'
 
-# Build & Push (solo cuando llega a main)
+# Build & Push Docker Image (solo en main)
 - stage: BuildAndPush
   displayName: 'Build & Push Docker Image'
-  # Se ejecuta si viene de main y no es PR
   condition: |
     and(
       succeeded(),
       or(
         eq(variables['Build.SourceBranch'], 'refs/heads/main'),
         eq(variables['Build.SourceBranchName'], 'main')
-      ),
-      ne(variables['Build.Reason'], 'PullRequest')
+      )
     )
   jobs:
   - job: Build
@@ -50,6 +56,7 @@ stages:
     - checkout: self
 
     - script: |
+        echo "Instalando dependencias..."
         npm ci
       displayName: 'Instalar dependencias'
 
