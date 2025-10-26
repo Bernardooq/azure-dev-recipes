@@ -1,0 +1,57 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main   # Se ejecuta solo cuando hay cambios en main
+
+pr:
+  branches:
+    include:
+    - main   # Se ejecuta al validar PR hacia main
+
+variables:
+  tag: '$(Build.BuildId)'
+  dockerConnection: 'docker'               # service connection
+  imageName: 'bernardo2004/recipes-app'    # imagen Docker Hub
+
+stages:
+# Stage 1: Validar Pull Request
+- stage: Validate
+  displayName: 'Validar Pull Request (sin push)'
+  condition: eq(variables['Build.Reason'], 'PullRequest')
+  jobs:
+  - job: ValidatePR
+    displayName: 'Instalar dependencias y validar build'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - checkout: self
+    - script: |
+        echo "Instalando dependencias..."
+        npm install
+        echo "Dependencias instaladas correctamente"
+      displayName: 'Instalar dependencias Node.js'
+
+# Stage 2: Build & Push solo tras merge
+- stage: BuildAndPush
+  displayName: 'Build & Push Docker Image'
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  jobs:
+  - job: BuildAndPushDocker
+    displayName: 'Construir y subir imagen al Docker Hub'
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - checkout: self
+
+    - task: Docker@2
+      displayName: 'Build & Push'
+      inputs:
+        command: buildAndPush
+        containerRegistry: '$(dockerConnection)'
+        repository: '$(imageName)'
+        dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+        tags: |
+          $(tag)
+          latest
