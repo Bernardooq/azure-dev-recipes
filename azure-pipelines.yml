@@ -1,8 +1,8 @@
-# Trigger para PRs hacia dev
+# Trigger para PRs hacia main
 pr:
   branches:
     include:
-      - dev
+      - main
 
 # Trigger para pushes directos a main (cuando se mergea el PR)
 trigger:
