@@ -1,13 +1,13 @@
 trigger:
   branches:
     include:
+      - dev
       - main
-      - dev  # Se ejecuta en pushes a dev y main
 
 pr:
   branches:
     include:
-      - dev  # Se ejecuta en PRs hacia dev
+      - dev
 
 variables:
   tag: '$(Build.BuildId)'
@@ -23,10 +23,7 @@ stages:
       eq(variables['Build.Reason'], 'PullRequest'),
       and(
         eq(variables['Build.Reason'], 'IndividualCI'),
-        or(
-          eq(variables['Build.SourceBranch'], 'refs/heads/dev'),
-          eq(variables['Build.SourceBranchName'], 'dev')
-        )
+        eq(variables['Build.SourceBranchName'], 'dev')
       )
     )
   jobs:
@@ -44,20 +41,15 @@ stages:
 #            npm test
           displayName: 'Instalar dependencias y correr pruebas'
 
-# -----------------------------------------
-# Stage 2: Build & Push Docker (solo merge a main)
-# -----------------------------------------
+
+# Stage 2: Build & Push Docker (solo en main)
 - stage: BuildAndPush
   displayName: 'Build & Push Docker Image'
-  dependsOn: Validate
   condition: |
     and(
       succeeded(),
-      eq(variables['Build.Reason'], 'Manual'),
-      or(
-        eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-        eq(variables['Build.SourceBranchName'], 'main')
-      )
+      eq(variables['Build.Reason'], 'IndividualCI'),
+      eq(variables['Build.SourceBranchName'], 'main')
     )
   jobs:
     - job: Build
