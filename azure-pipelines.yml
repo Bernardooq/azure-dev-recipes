@@ -34,7 +34,7 @@ stages:
 #            npm test
           displayName: 'Instalar dependencias y correr pruebas'
 
-# Stage 2: Build & Push Docker (solo en main después del merge)
+# Stage 2: Build & Push Docker (solo en main despues del merge)
 - stage: BuildAndPush
   dependsOn: Validate 
   displayName: 'Build & Push Docker Image'
