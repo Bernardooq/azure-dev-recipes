@@ -48,7 +48,6 @@ stages:
   condition: |
     and(
       succeeded(),
-      ne(variables['Build.Reason'], 'PullRequest'),
       contains(variables['Build.SourceBranch'], 'main')
     )
 
