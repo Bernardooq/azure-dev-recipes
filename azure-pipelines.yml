@@ -1,7 +1,14 @@
+# Trigger para PRs hacia dev
 pr:
   branches:
     include:
       - dev
+
+# Trigger para pushes directos a main (cuando se mergea el PR)
+trigger:
+  branches:
+    include:
+      - main
 
 variables:
   tag: '$(Build.BuildId)'
@@ -12,14 +19,7 @@ stages:
 # Stage 1: Validación y pruebas
 - stage: Validate
   displayName: 'Validar y ejecutar pruebas'
-  condition: |
-    or(
-      eq(variables['Build.Reason'], 'PullRequest'),
-      and(
-        eq(variables['Build.Reason'], 'IndividualCI'),
-        eq(variables['Build.SourceBranch'], 'refs/heads/dev')
-      )
-    )
+  condition: eq(variables['Build.Reason'], 'PullRequest')
   jobs:
     - job: Test
       displayName: 'Ejecutar pruebas'
@@ -35,10 +35,12 @@ stages:
 #            npm test
           displayName: 'Instalar dependencias y correr pruebas'
 
-# Stage 2: Build & Push Docker (solo en main, no PR)
+# Stage 2: Build & Push Docker (solo cuando se mergea a main)
 - stage: BuildAndPush
   displayName: 'Build & Push Docker Image'
-  dependsOn: Validate
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  dependsOn: 
+    - Validate
   jobs:
     - job: Build
       displayName: 'Construir y subir imagen Docker'
