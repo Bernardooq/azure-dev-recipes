@@ -45,12 +45,6 @@ stages:
 - stage: BuildAndPush
   displayName: 'Build & Push Docker Image'
   dependsOn: Validate
-  condition: |
-    and(
-      succeeded(),
-      contains(variables['Build.SourceBranch'], 'main')
-    )
-
   jobs:
     - job: Build
       displayName: 'Construir y subir imagen Docker'
