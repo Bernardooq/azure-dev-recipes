@@ -15,7 +15,7 @@ variables:
   dockerConnection: 'docker'
 
 stages:
-# Stage 1: Validacion y pruebas
+# Stage 1: Validación y pruebas
 - stage: Validate
   displayName: 'Validar y ejecutar pruebas'
   condition: |
@@ -23,7 +23,7 @@ stages:
       eq(variables['Build.Reason'], 'PullRequest'),
       and(
         eq(variables['Build.Reason'], 'IndividualCI'),
-        eq(variables['Build.SourceBranchName'], 'dev')
+        eq(variables['Build.SourceBranch'], 'refs/heads/dev')
       )
     )
   jobs:
@@ -38,7 +38,7 @@ stages:
             echo "Instalando dependencias..."
             npm install
             echo "Ejecutando pruebas..."
-#            npm test
+            npm test
           displayName: 'Instalar dependencias y correr pruebas'
 
 # Stage 2: Build & Push Docker (solo en main, no PR)
@@ -48,7 +48,7 @@ stages:
   condition: |
     and(
       succeeded(),
-      eq(variables['Build.SourceBranchName'], 'main'),
+      eq(variables['Build.SourceBranch'], 'refs/heads/main'),
       ne(variables['Build.Reason'], 'PullRequest')
     )
   jobs:
