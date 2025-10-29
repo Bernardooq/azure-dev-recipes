@@ -2,7 +2,7 @@ trigger:
   branches:
     include:
       - main
-      - dev  # Para que dispare también al hacer merge a main o push a dev
+      - dev  # Se dipara con cambios en dev y merges en main
 
 pr:
   branches:
@@ -57,7 +57,7 @@ stages:
 
     - script: |
         echo "Instalando dependencias..."
-        npm ci
+        npm install
       displayName: 'Instalar dependencias'
 
     - task: Docker@2
