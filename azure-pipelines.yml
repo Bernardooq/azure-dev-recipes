@@ -41,21 +41,21 @@ stages:
             echo "Instalando dependencias..."
             npm install
             echo "Ejecutando pruebas..."
-#            npm test
+            npm test
           displayName: 'Instalar dependencias y correr pruebas'
 
-# Stage 2: Build & Push Docker (solo en main)
+# Stage 2: Build & Push Docker (solo en merge a main)
 - stage: BuildAndPush
   displayName: 'Build & Push Docker Image'
   dependsOn: Validate
   condition: |
     and(
       succeeded(),
+      eq(variables['Build.Reason'], 'IndividualCI'),
       or(
         eq(variables['Build.SourceBranch'], 'refs/heads/main'),
         eq(variables['Build.SourceBranchName'], 'main')
       ),
-      eq(variables['Build.Reason'], 'IndividualCI'),
       contains(variables['Build.SourceVersionMessage'], 'Merge pull request')
     )
   jobs:
