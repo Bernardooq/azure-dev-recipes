@@ -2,12 +2,12 @@ trigger:
   branches:
     include:
       - main
-      - dev  # Se dipara con cambios en dev y merges en main
+      - dev  # Se ejecuta en pushes a dev y main
 
 pr:
   branches:
     include:
-      - dev
+      - dev  # Se ejecuta en PRs hacia dev
 
 variables:
   tag: '$(Build.BuildId)'
@@ -15,18 +15,17 @@ variables:
   dockerConnection: 'docker'
 
 stages:
-# Validacion y pruebas
+# Stage 1: Validacion y pruebas
 - stage: Validate
   displayName: 'Validar y ejecutar pruebas'
-  # Se ejecuta en cualquier evento (PR, merge, push)
   condition: |
     or(
       eq(variables['Build.Reason'], 'PullRequest'),
       and(
         eq(variables['Build.Reason'], 'IndividualCI'),
         or(
-          eq(variables['Build.SourceBranch'], 'refs/heads/main'),
-          eq(variables['Build.SourceBranchName'], 'main')
+          eq(variables['Build.SourceBranch'], 'refs/heads/dev'),
+          eq(variables['Build.SourceBranchName'], 'dev')
         )
       )
     )
@@ -42,41 +41,44 @@ stages:
             echo "Instalando dependencias..."
             npm install
             echo "Ejecutando pruebas..."
-#           npm test
+#            npm test
           displayName: 'Instalar dependencias y correr pruebas'
 
-
-
-# Build & Push Docker Image (solo en main)
+# -----------------------------------------
+# Stage 2: Build & Push Docker (solo merge a main)
+# -----------------------------------------
 - stage: BuildAndPush
   displayName: 'Build & Push Docker Image'
+  dependsOn: Validate
   condition: |
     and(
       succeeded(),
+      eq(variables['Build.Reason'], 'Manual'),
       or(
         eq(variables['Build.SourceBranch'], 'refs/heads/main'),
         eq(variables['Build.SourceBranchName'], 'main')
       )
     )
   jobs:
-  - job: Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - checkout: self
+    - job: Build
+      displayName: 'Construir y subir imagen Docker'
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+        - checkout: self
 
-    - script: |
-        echo "Instalando dependencias..."
-        npm install
-      displayName: 'Instalar dependencias'
+        - script: |
+            echo "Instalando dependencias..."
+            npm install
+          displayName: 'Instalar dependencias'
 
-    - task: Docker@2
-      displayName: 'Build and Push Docker image'
-      inputs:
-        command: buildAndPush
-        containerRegistry: '$(dockerConnection)'
-        repository: '$(imageName)'
-        Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-        tags: |
-          $(tag)
-          latest
+        - task: Docker@2
+          displayName: 'Build and Push Docker image'
+          inputs:
+            command: buildAndPush
+            containerRegistry: '$(dockerConnection)'
+            repository: '$(imageName)'
+            Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+            tags: |
+              $(tag)
+              latest
