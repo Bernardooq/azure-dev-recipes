@@ -3,6 +3,7 @@ pr:
   branches:
     include:
       - main
+      - dev
 
 # Trigger para pushes directos a main (cuando se mergea el PR)
 trigger:
@@ -37,6 +38,7 @@ stages:
 
 # Stage 2: Build & Push Docker (solo en main después del merge)
 - stage: BuildAndPush
+  dependsOn: Validate
   displayName: 'Build & Push Docker Image'
   condition: |
     and(
