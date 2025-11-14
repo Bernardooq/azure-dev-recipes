@@ -42,7 +42,6 @@ stages:
 
         - script: |
             echo "Ejecutando pruebas con coverage..."
-            # Ejecuta jest con coverage (ajusta tu comando si es distinto)
             npx jest --coverage --runInBand --forceExit --detectOpenHandles
             echo "Cobertura OK (>= ${THRESHOLD}%)"
           displayName: 'Run Jest + check coverage >= 90%'
