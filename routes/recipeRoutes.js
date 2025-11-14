@@ -144,13 +144,14 @@ router.delete('/:recipeId',auth.validateTokenWithCookie ,async (req, res) => {
         return
     }
 
-    for (let i = 0; i < recipe.reviews.length; i++)
-    {
-        await Review.deleteReview(req.username, recipe.reviews[i]._id, req.params.recipeId)
+    const reviews = recipe.reviews || [];
+
+    for (let i = 0; i < reviews.length; i++) {
+        await Review.deleteReview(req.username, reviews[i]._id, req.params.recipeId);
     }
     let recipedeleted = await Recipe.deleteRecipe(recipeId);
     await User.removeMyRecipes(req.username, req.params.recipeId);
-    res.send(recipedeleted);
+    return res.status(200).send(recipedeleted);
 });
 
 // Operación PUT para actualizar una receta por su ID

@@ -67,6 +67,6 @@ describe('Category Routes', () => {
       .send(newCategory);
 
     expect(res.status).toBe(500);
-    expect(res.body).toEqual({ error: 'Error saving category' });
+    expect(res.body).toEqual({ error: 'DB Error' });
   });
 });

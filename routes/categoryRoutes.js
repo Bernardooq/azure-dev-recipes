@@ -10,10 +10,14 @@ router.get('/',async (req, res)=> {
 });
 
 router.post('/', auth.validateTokenWithCookie ,async (req, res) => {
-    console.log(req.body);
-    let category = req.body;
-    let newCategory = await Category.saveCategory(category);
-    res.send(newCategory);
+    try {
+        console.log(req.body);
+        let category = req.body;
+        let newCategory = await Category.saveCategory(category);
+        res.send(newCategory);
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
 });
 
 module.exports = router;
