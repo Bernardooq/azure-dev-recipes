@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="23" failures="0" errors="0" time="3.636">
+  <testsuite name="Recipe Routes (principales)" errors="0" failures="0" skipped="0" timestamp="2025-11-14T16:52:35" time="1.667" tests="7">
+    <testcase classname="Recipe Routes (principales) GET /recipes debe devolver lista de recetas" name="Recipe Routes (principales) GET /recipes debe devolver lista de recetas" time="0.044">
+    </testcase>
+    <testcase classname="Recipe Routes (principales) GET /recipes/:id debe devolver una receta si existe" name="Recipe Routes (principales) GET /recipes/:id debe devolver una receta si existe" time="0.021">
+    </testcase>
+    <testcase classname="Recipe Routes (principales) GET /recipes/:id debe devolver 404 si no existe" name="Recipe Routes (principales) GET /recipes/:id debe devolver 404 si no existe" time="0.02">
+    </testcase>
+    <testcase classname="Recipe Routes (principales) POST /recipes debe crear una nueva receta" name="Recipe Routes (principales) POST /recipes debe crear una nueva receta" time="0.038">
+    </testcase>
+    <testcase classname="Recipe Routes (principales) DELETE /recipes/:id debe eliminar receta si el usuario es dueño" name="Recipe Routes (principales) DELETE /recipes/:id debe eliminar receta si el usuario es dueño" time="0.012">
+    </testcase>
+    <testcase classname="Recipe Routes (principales) DELETE /recipes/:id debe devolver 403 si el usuario no es el dueño" name="Recipe Routes (principales) DELETE /recipes/:id debe devolver 403 si el usuario no es el dueño" time="0.011">
+    </testcase>
+    <testcase classname="Recipe Routes (principales) DELETE /recipes/:id debe devolver 404 si la receta no existe" name="Recipe Routes (principales) DELETE /recipes/:id debe devolver 404 si la receta no existe" time="0.013">
+    </testcase>
+  </testsuite>
+  <testsuite name="User Routes (4 rutas principales)" errors="0" failures="0" skipped="0" timestamp="2025-11-14T16:52:37" time="0.8" tests="7">
+    <testcase classname="User Routes (4 rutas principales) GET /users debe devolver la lista de usuarios" name="User Routes (4 rutas principales) GET /users debe devolver la lista de usuarios" time="0.026">
+    </testcase>
+    <testcase classname="User Routes (4 rutas principales) POST /users debe crear un usuario nuevo" name="User Routes (4 rutas principales) POST /users debe crear un usuario nuevo" time="0.021">
+    </testcase>
+    <testcase classname="User Routes (4 rutas principales) POST /users debe devolver error si el usuario ya existe" name="User Routes (4 rutas principales) POST /users debe devolver error si el usuario ya existe" time="0.024">
+    </testcase>
+    <testcase classname="User Routes (4 rutas principales) PUT /users/change-password debe cambiar la contraseña correctamente" name="User Routes (4 rutas principales) PUT /users/change-password debe cambiar la contraseña correctamente" time="0.175">
+    </testcase>
+    <testcase classname="User Routes (4 rutas principales) PUT /users/change-password debe fallar si la contraseña actual es incorrecta" name="User Routes (4 rutas principales) PUT /users/change-password debe fallar si la contraseña actual es incorrecta" time="0.171">
+    </testcase>
+    <testcase classname="User Routes (4 rutas principales) DELETE /users/username/:username debe eliminar usuario si es el dueño" name="User Routes (4 rutas principales) DELETE /users/username/:username debe eliminar usuario si es el dueño" time="0.009">
+    </testcase>
+    <testcase classname="User Routes (4 rutas principales) DELETE /users/username/:username debe devolver 403 si no es el dueño" name="User Routes (4 rutas principales) DELETE /users/username/:username debe devolver 403 si no es el dueño" time="0.01">
+    </testcase>
+  </testsuite>
+  <testsuite name="Category Routes" errors="0" failures="0" skipped="0" timestamp="2025-11-14T16:52:38" time="0.29" tests="3">
+    <testcase classname="Category Routes GET /categories debe devolver todas las categorías" name="Category Routes GET /categories debe devolver todas las categorías" time="0.028">
+    </testcase>
+    <testcase classname="Category Routes POST /categories debe crear una nueva categoría" name="Category Routes POST /categories debe crear una nueva categoría" time="0.024">
+    </testcase>
+    <testcase classname="Category Routes POST /categories debe manejar errores al guardar la categoría" name="Category Routes POST /categories debe manejar errores al guardar la categoría" time="0.01">
+    </testcase>
+  </testsuite>
+  <testsuite name="Review Routes" errors="0" failures="0" skipped="0" timestamp="2025-11-14T16:52:38" time="0.304" tests="3">
+    <testcase classname="Review Routes GET /reviews debe devolver las reseñas (mocked)" name="Review Routes GET /reviews debe devolver las reseñas (mocked)" time="0.035">
+    </testcase>
+    <testcase classname="Review Routes POST /reviews/:recipeId debe crear una nueva reseña" name="Review Routes POST /reviews/:recipeId debe crear una nueva reseña" time="0.027">
+    </testcase>
+    <testcase classname="Review Routes DELETE /reviews/:recipeId/:reviewId debe devolver 403 si no es el autor" name="Review Routes DELETE /reviews/:recipeId/:reviewId debe devolver 403 si no es el autor" time="0.01">
+    </testcase>
+  </testsuite>
+  <testsuite name="Auth Routes" errors="0" failures="0" skipped="0" timestamp="2025-11-14T16:52:39" time="0.313" tests="3">
+    <testcase classname="Auth Routes POST /login debe devolver token si las credenciales son correctas" name="Auth Routes POST /login debe devolver token si las credenciales son correctas" time="0.05">
+    </testcase>
+    <testcase classname="Auth Routes POST /login debe devolver 401 si el usuario no existe" name="Auth Routes POST /login debe devolver 401 si el usuario no existe" time="0.026">
+    </testcase>
+    <testcase classname="Auth Routes GET /logout debe limpiar cookie y responder mensaje" name="Auth Routes GET /logout debe limpiar cookie y responder mensaje" time="0.01">
+    </testcase>
+  </testsuite>
+</testsuites>

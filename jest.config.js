@@ -12,7 +12,7 @@ module.exports = {
   ],
   collectCoverage: true,
   collectCoverageFrom: [
-    "azure-dev-recipes/routes/**/*.js"
+    "routes/**/*.js"
   ],
   coverageReporters: ["cobertura", "lcov"],
   coverageDirectory: "coverage",
