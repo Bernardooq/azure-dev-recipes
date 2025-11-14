@@ -13,102 +13,118 @@ variables:
   tag: '$(Build.BuildId)'
   imageName: 'bernardo2004/recipes-proy'
   dockerConnection: 'docker'
-  azureServiceConnection: 'Azure'     # Service Connection tipo Azure Resource Manager (cámbialo)
-  resourceGroup: 'rg-practica11'          # sustituye si lo necesitas
-  webAppName: 'webapp-practica11'        # nombre de la web app creada por Terraform
-  location: 'westus'                    # opcional
+  azureServiceConnection: 'Azure'
+  resourceGroup: 'rg-practica11'
+  webAppName: 'webapp-practica11'
+  location: 'westus'
 
 stages:
-- stage: Validate
-  displayName: 'Validar y ejecutar pruebas'
-  jobs:
-    - job: Test
-      displayName: 'Ejecutar pruebas y verificar coverage'
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-        - checkout: self
-          persistCredentials: true
+  - stage: Validate
+    displayName: 'Validar y ejecutar pruebas'
+    jobs:
+      - job: Test
+        displayName: 'Ejecutar pruebas y verificar coverage'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
+            persistCredentials: true
 
-        - task: NodeTool@0
-          inputs:
-            versionSpec: '18.x'
-          displayName: 'Use Node 18'
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Use Node 18'
 
-        - script: |
-            echo "Instalando dependencias..."
-            npm ci
-          displayName: 'Instalar dependencias'
+          - script: |
+              echo "Instalando dependencias..."
+              npm ci
+            displayName: 'Instalar dependencias'
 
-        - script: |
-            echo "Ejecutando pruebas con coverage..."
-            # Ejecuta jest con coverage (ajusta tu comando si es distinto)
-            npx jest --coverage
-            echo "Cobertura OK (>= ${THRESHOLD}%)"
-          displayName: 'Run Jest + check coverage >= 90%'
+          - script: |
+              echo "Ejecutando pruebas..."
+              npx jest --coverage --runInBand --forceExit --detectOpenHandles
+            displayName: 'Run Jest'
 
-- stage: BuildAndPush
-  dependsOn: Validate
-  displayName: 'Build & Push Docker Image'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-  jobs:
-    - job: Build
-      displayName: 'Construir y subir imagen Docker'
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-        - checkout: self
+          - script: |
+              npm install -g lcov-to-cobertura-xml
+              lcov-to-cobertura-xml coverage/lcov.info -o coverage/cobertura-coverage.xml
+            displayName: 'Convertir lcov a cobertura XML'
 
-        - task: NodeTool@0
-          inputs:
-            versionSpec: '18.x'
-          displayName: 'Use Node 18'
+          - task: PublishCodeCoverageResults@1
+            displayName: 'Publicar Code Coverage'
+            inputs:
+              coverageTool: 'Cobertura'
+              summaryFileLocation: 'coverage/cobertura-coverage.xml'
+              reportDirectory: 'coverage'
 
-        - script: |
-            echo "Instalando dependencias..."
-            npm ci
-          displayName: 'Instalar dependencias'
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publicar reporte HTML de coverage'
+            inputs:
+              PathtoPublish: 'coverage/lcov-report'
+              ArtifactName: 'coverage-html'
+              publishLocation: 'Container'
 
-        - task: Docker@2
-          displayName: 'Build and Push Docker image'
-          inputs:
-            command: buildAndPush
-            containerRegistry: '$(dockerConnection)'
-            repository: '$(imageName)'
-            Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-            tags: |
-              $(tag)
-              latest
+  - stage: BuildAndPush
+    dependsOn: Validate
+    displayName: 'Build & Push Docker Image'
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: Build
+        displayName: 'Construir y subir imagen Docker'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - checkout: self
 
-- stage: Deploy
-  dependsOn: BuildAndPush
-  displayName: "Deploy to Azure Web App with Docker Image"
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-  jobs:
-    - job: Deploy
-      displayName: "Deploy Docker image"
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-        - task: AzureCLI@2
-          displayName: "Configure Web App to use Docker image"
-          inputs:
-            azureSubscription: "$(azureServiceConnection)"
-            scriptType: bash
-            scriptLocation: inlineScript
-            inlineScript: |
-              echo "Configurando Web App para usar la imagen Docker..."
-              
-              # DockerHub:
-              az webapp config container set \
-                --resource-group $(resourceGroup) \
-                --name $(webAppName) \
-                --docker-custom-image-name $(imageName):latest \
-                --docker-registry-server-url https://index.docker.io/v1/
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Use Node 18'
 
-              echo "Reiniciando Web App..."
-              az webapp restart \
-                --resource-group $(resourceGroup) \
-                --name $(webAppName)
+          - script: |
+              echo "Instalando dependencias..."
+              npm ci
+            displayName: 'Instalar dependencias'
 
-              echo "DEPLOY COMPLETADO con imagen Docker."
+          - task: Docker@2
+            displayName: 'Build and Push Docker image'
+            inputs:
+              command: buildAndPush
+              containerRegistry: '$(dockerConnection)'
+              repository: '$(imageName)'
+              Dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              tags: |
+                $(tag)
+                latest
+
+  - stage: Deploy
+    dependsOn: BuildAndPush
+    displayName: 'Deploy to Azure Web App with Docker Image'
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: Deploy
+        displayName: 'Deploy Docker image'
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: AzureCLI@2
+            displayName: 'Configure Web App to use Docker image'
+            inputs:
+              azureSubscription: '$(azureServiceConnection)'
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                echo "Configurando Web App para usar la imagen Docker..."
+                
+                az webapp config container set \
+                  --resource-group $(resourceGroup) \
+                  --name $(webAppName) \
+                  --docker-custom-image-name $(imageName):latest \
+                  --docker-registry-server-url https://index.docker.io/v1/
+
+                echo "Reiniciando Web App..."
+                az webapp restart \
+                  --resource-group $(resourceGroup) \
+                  --name $(webAppName)
+
+                echo "DEPLOY COMPLETADO con imagen Docker."
