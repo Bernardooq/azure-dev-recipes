@@ -45,25 +45,6 @@ stages:
               npx jest --coverage --runInBand --forceExit --detectOpenHandles
             displayName: 'Run Jest'
 
-          - script: |
-              npm install -g lcov-to-cobertura-xml
-              lcov-to-cobertura-xml coverage/lcov.info -o coverage/cobertura-coverage.xml
-            displayName: 'Convertir lcov a cobertura XML'
-
-          - task: PublishCodeCoverageResults@1
-            displayName: 'Publicar Code Coverage'
-            inputs:
-              coverageTool: 'Cobertura'
-              summaryFileLocation: 'coverage/cobertura-coverage.xml'
-              reportDirectory: 'coverage'
-
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publicar reporte HTML de coverage'
-            inputs:
-              PathtoPublish: 'coverage/lcov-report'
-              ArtifactName: 'coverage-html'
-              publishLocation: 'Container'
-
   - stage: BuildAndPush
     dependsOn: Validate
     displayName: 'Build & Push Docker Image'
