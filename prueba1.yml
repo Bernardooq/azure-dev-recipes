@@ -44,6 +44,19 @@ stages:
               echo "Ejecutando pruebas..."
               npx jest --coverage --runInBand --forceExit --detectOpenHandles
             displayName: 'Run Jest'
+          
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: 'test-results/jest-junit.xml'
+              failTaskOnFailedTests: true
+            condition: succeededOrFailed()
+
+          - task: PublishCodeCoverageResults@2
+            inputs:
+              codeCoverageTool: 'Cobertura'
+              summaryFileLocation: 'coverage/cobertura-coverage.xml'
+              reportDirectory: 'coverage/lcov-report'
 
   - stage: BuildAndPush
     dependsOn: Validate
