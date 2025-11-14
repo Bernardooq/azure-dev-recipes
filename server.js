@@ -42,10 +42,5 @@ app.use('/api/messages', logger, messageRoute);
 
 app.use('/api/reviews', logger, reviewRoute);
 
-if (require.main === module) {
-    app.listen(port, () => console.log("Running in port " + port));
-}
-
-// Exporta la app para usar en tests
-module.exports = app;
+app.listen(port, ()=> console.log("Running in port" + port))
 
