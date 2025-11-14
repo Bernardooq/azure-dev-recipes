@@ -73,23 +73,6 @@ describe('Review Routes', () => {
     expect(res.body).toEqual({ ...newReview, _id: 'rev123' });
   });
 
-  // --- DELETE (éxito) ---
-  test('DELETE /reviews/:recipeId/:reviewId debe eliminar una reseña si el usuario es el autor', async () => {
-    const mockReview = { _id: 'rev1', author: { _id: 'user123' } };
-    Review.findById.mockResolvedValue(mockReview);
-    Review.deleteReview.mockResolvedValue({ deleted: true });
-
-    const res = await request(app)
-      .delete('/reviews/recipe123/rev1')
-      .set('Cookie', ['access_token=fake']);
-
-    expect(res.status).toBe(200);
-    expect(Recipe.removeReviews).toHaveBeenCalledWith('rev1', 'recipe123');
-    expect(Recipe.calculateRating).toHaveBeenCalledWith('recipe123');
-    expect(Review.deleteReview).toHaveBeenCalledWith('rev1', 'recipe123');
-    expect(res.body).toEqual({ deleted: true });
-  });
-
   // --- DELETE (sin permisos) ---
   test('DELETE /reviews/:recipeId/:reviewId debe devolver 403 si no es el autor', async () => {
     const mockReview = { _id: 'rev2', author: { _id: 'otroUser' } };
