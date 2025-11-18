@@ -57,6 +57,20 @@ stages:
               codeCoverageTool: 'Cobertura'
               summaryFileLocation: 'coverage/cobertura-coverage.xml'
               reportDirectory: 'coverage/lcov-report'
+          
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publicar coverage completo'
+            inputs:
+              PathtoPublish: 'coverage'
+              ArtifactName: 'coverage-report'
+              publishLocation: 'Container'
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publicar junit report'
+            inputs:
+              PathtoPublish: 'test-results'
+              ArtifactName: 'jest-junit'
+              publishLocation: 'Container'
 
   - stage: BuildAndPush
     dependsOn: Validate
