@@ -14,8 +14,8 @@ variables:
   imageName: 'bernardo2004/recipes-proy'
   dockerConnection: 'docker'
   azureServiceConnection: 'Azure'
-  resourceGroup: 'rg-practica11'
-  webAppName: 'webapp-practica11'
+  resourceGroup: 'rg-proyecto'
+  webAppName: 'webapp-proyecto'
   location: 'westus'
 
 stages:
