@@ -6,7 +6,7 @@ const { nodeProfilingIntegration } = require("@sentry/profiling-node");
 
 // Inicializa Sentry
 Sentry.init({
-  dsn: "https://5acd59b877f13bd483fb338b77218e65@o4510297418629120.ingest.us.sentry.io/4510297475252224",
+  dsn: "https://9aa28a83c76b6254d7f70020d6d2921f@o4510297418629120.ingest.us.sentry.io/4510397597614080",
   integrations: [nodeProfilingIntegration()],
   tracesSampleRate: 1.0,
   profileSessionSampleRate: 1.0,
