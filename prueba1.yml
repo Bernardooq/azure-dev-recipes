@@ -16,7 +16,7 @@ variables:
   azureServiceConnection: 'Azure'
   resourceGroup: 'rg-proyecto'
   webAppName: 'webapp-proyecto'
-  webAppNameProd: 'webapp-prod'
+  webAppNameProd: 'webapp-prod-con04'
   location: 'westus'
 
 stages:
@@ -140,7 +140,7 @@ stages:
 
 
   - stage: DeployProd
-    dependsOn: BuildAndPush
+    dependsOn: Deploy
     displayName: 'Deploy to Azure Web App with Docker Image'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
